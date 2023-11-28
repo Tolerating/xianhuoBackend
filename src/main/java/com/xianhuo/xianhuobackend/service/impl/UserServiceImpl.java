@@ -15,11 +15,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UsersMapper usersMapper;
     @Override
-    public Users loginPhone(String phone, String pwd) {
+    public Users loginPhone(Users users) {
 
         LambdaQueryWrapper<Users> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Users::getPhone,phone)
-                .eq(Users::getPassword,pwd);
+        wrapper.eq(Users::getPhone,users.getPhone())
+                .eq(Users::getPassword,users.getPassword());
 
         Users user = usersMapper.selectOne(wrapper);
         return user;

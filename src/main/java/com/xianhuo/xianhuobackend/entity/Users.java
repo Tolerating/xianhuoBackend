@@ -5,7 +5,9 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * (Users)表实体类
@@ -19,35 +21,42 @@ import lombok.Data;
 public class Users {
     @TableId(type = IdType.AUTO)
     private Long id;
-//用户昵称
+    //用户昵称
     private String name;
-//电话
+    //电话
     private String phone;
-//密码
+    //密码
     private String password;
-//学校id
+    //学校id
     private Integer schoolId;
-//用户头像
+    //用户头像
     private String avatar;
-//邮箱地址
+    //邮箱地址
     private String email;
-//身份证
+    //身份证
     private String identityCard;
-//学生学号
+    //学生学号
     private String stuNumber;
-//班级
+    //班级
     private String grade;
-//学院
+    //学院
     private String faculty;
-//专业
+    //专业
     private String major;
-//生日
+
+    //生日
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date birthday;
-//信誉分
+    //信誉分
     private Integer score;
-//创建时间
+    //创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
-//删除时间
+    //删除时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date deletedAt;
 }
 

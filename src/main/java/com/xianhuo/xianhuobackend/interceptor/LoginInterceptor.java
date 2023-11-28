@@ -13,6 +13,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //跨域放行
         if ("OPTIONS".equals(request.getMethod().toUpperCase())){
+            System.out.println("OPTOINS请求");
             return true;
         }
 
@@ -38,9 +39,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     }
 
     private void handleFalseResponse(HttpServletResponse response) throws Exception {
-        response.setStatus(200);
+        response.setStatus(401);
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("{\"message\":\"token过期，请重新登录\",\"code\":\"6021\"}");
+        response.getWriter().write("{\"message\":\"token过期，请重新登录\",\"code\":\"401\"}");
         response.addHeader("Content-Type" ,
                 "application/json; charset=utf-8");
         response.getWriter().flush();
