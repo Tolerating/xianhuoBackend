@@ -23,10 +23,10 @@ public class UserController {
         Users users = userService.loginPhone(user);
         if(users != null){
             String toekn = JWTUtil.createJWT(users.getId().toString(), "", "");
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("token",toekn);
-            hashMap.put("data",users);
-            return ResponseResult.ok(hashMap,"登录成功");
+//            HashMap<String, Object> hashMap = new HashMap<>();
+//            hashMap.put("token",toekn);
+//            hashMap.put("data",users);
+            return ResponseResult.ok(toekn,"登录成功");
         }else{
 
             return ResponseResult.fail(users,"用户名或密码错误！");
