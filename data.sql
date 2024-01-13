@@ -17,11 +17,15 @@ create table if not exists users
     created_at    timestamp default now() comment '创建时间',
     deleted_at    timestamp comment '删除时间'
 );
+
 DROP TABLE IF EXISTS category;
 create table category
 (
     id   bigint primary key auto_increment,
-    name varchar(50) not null comment '分类名称'
+    name varchar(50) not null comment '分类名称',
+    status      boolean     not null default 1 comment '分类状态',
+    create_time timestamp            default now() comment '创建时间',
+    update_time timestamp comment '更新时间'
 );
 
 insert category(name)
@@ -46,7 +50,7 @@ create table sell_mode
 (
     id          bigint primary key auto_increment comment '出售方式id',
     name        varchar(50) not null comment '出售方式名称',
-    status      boolean     not null default true comment '出售方式状态',
+    status      boolean     not null default 1 comment '出售方式状态',
     create_time timestamp            default now() comment '创建时间',
     update_time timestamp comment '更新时间'
 
@@ -55,15 +59,6 @@ insert sell_mode(name)
 values ('物品出售'),
        ('物品出租'),
        ('物品交换');
---  出售方式与商品类别中间表，
-# drop table if exists sell_mode_category;
-# create table sell_mode_category
-# (
-#     sell_mode_id bigint not null comment '出售方式id',
-#     category_id  bigint not null comment '分类id',
-#     primary key (sell_mode_id, category_id)
-#
-# );
 
 --  发货方式表
 drop table if exists dispatch_mode;
@@ -71,7 +66,9 @@ create table dispatch_mode
 (
     id     bigint primary key auto_increment comment '发货方式id',
     name   varchar(50) not null comment '发货方式名字',
-    status boolean     not null default true comment '发货方式状态'
+    status boolean     not null default 1 comment '发货方式状态',
+    create_time timestamp            default now() comment '创建时间',
+    update_time timestamp comment '更新时间'
 );
 insert dispatch_mode(name)
 values ('快递'),
@@ -84,7 +81,7 @@ create table product_require
 (
     id          bigint primary key auto_increment comment 'id',
     name        varchar(50) not null comment '商品要求名字',
-    status      boolean     not null default true comment '商品要求状态',
+    status      boolean     not null default 1 comment '商品要求状态',
     create_time timestamp            default now() comment '创建时间',
     update_time timestamp comment '更新时间'
 );
@@ -99,21 +96,24 @@ drop table if exists sell_mode_dispatch_require;
 create table sell_mode_dispatch_require
 (
     id                 bigint primary key auto_increment,
-    sell_mode_id       bigint             not null,
-    dispatch_id        bigint             not null,
-    product_require_id bigint             not null
+    sell_mode_id       bigint not null,
+    dispatch_id        bigint not null,
+    product_require_id bigint not null,
+    status      boolean     not null default 1 comment '状态',
+    create_time timestamp            default now() comment '创建时间',
+    update_time timestamp comment '更新时间'
 );
-insert sell_mode_dispatch_require(sell_mode_id,dispatch_id,product_require_id)
-values (1, 1,1),
-       (1, 1,2),
-       (1, 2,1),
-       (1, 2,2),
-       (1, 2,3),
-       (2, 2,1),
-       (2, 2,2),
-       (2, 2,3),
-       (3, 2,1),
-       (2, 2,3);
+insert sell_mode_dispatch_require(sell_mode_id, dispatch_id, product_require_id)
+values (1, 1, 1),
+       (1, 1, 2),
+       (1, 2, 1),
+       (1, 2, 2),
+       (1, 2, 3),
+       (2, 2, 1),
+       (2, 2, 2),
+       (2, 2, 3),
+       (3, 2, 1),
+       (2, 2, 3);
 
 --  商品列表
 drop table if exists product;
@@ -122,17 +122,20 @@ create table product
     id               bigint primary key auto_increment comment '商品id',
     category_id      bigint         not null comment '分类id',
     detail           text           not null comment '商品详情',
-    images           json           not null comment '商品图片，["",""]',
+    images           text           not null comment '商品图片，以逗号分隔',
     current_price    decimal(20, 2) not null comment '商品价格，保留两位小数',
-    time_unit        enum ('时','天','周','月','年') comment '物品出租计量单位',
+    time_unit        varchar(20) comment '物品出租时间计量单位',
     origin_price     decimal(20, 2) comment '商品原价',
     sell_mode_id     bigint         not null comment '出售方式id',
     dispatch_mode_id bigint         not null comment '发货方式id',
     user_id          bigint         not null comment '发布者id',
-    status           boolean        not null default true comment '商品状态',
+    product_require_id varchar(10) comment '商品要求id,以逗号分隔',
+    status           int        not null default 1 comment '商品状态，1表示在售，0表示售出，-1表示下架',
     location         varchar(50)    not null comment '商品所在学校定位',
     freight          decimal(20, 2) comment '运费',
     create_time      timestamp               default now() comment '创建时间',
-    update_time      timestamp comment '更新时间'
+    update_time      timestamp comment '更新时间',
+    delete_time timestamp comment '删除时间'
 
 );
+
