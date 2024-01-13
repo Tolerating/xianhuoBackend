@@ -1,8 +1,11 @@
 package com.xianhuo.xianhuobackend.controller;
 
+import com.xianhuo.xianhuobackend.common.ResponseProcess;
 import com.xianhuo.xianhuobackend.common.ResponseResult;
-import com.xianhuo.xianhuobackend.entity.XhCategory;
-import com.xianhuo.xianhuobackend.service.GoodsService;
+import com.xianhuo.xianhuobackend.entity.Category;
+import com.xianhuo.xianhuobackend.entity.Product;
+import com.xianhuo.xianhuobackend.service.CategoryService;
+import com.xianhuo.xianhuobackend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +20,13 @@ import java.util.List;
 public class CategoryController {
 
     @Autowired
-    private GoodsService goodsService;
+    private CategoryService categoryService;
 
+    //获取全部分类
     @GetMapping("/categories")
-    public ResponseResult<List<XhCategory>> categoryList(){
-        List<XhCategory> xhCategories = goodsService.allCategory();
-
-        return ResponseResult.ok(xhCategories,"获取成功");
+    public ResponseResult<List<Category>> categoryList(){
+        List<Category> categories = categoryService.list();
+        return ResponseProcess.returnList(categories);
     }
 
 }
