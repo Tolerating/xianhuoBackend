@@ -26,9 +26,4 @@ public class SellModeController {
                 .collect(Collectors.toList());
         return ResponseProcess.returnList(list);
     }
-
-    @GetMapping("/allUseableSellRules/{id}")
-    public ResponseResult<Long> allUseableSellRules(@PathVariable(value = "id")long id){
-        return ResponseResult.ok(id,"success");
-    }
 }

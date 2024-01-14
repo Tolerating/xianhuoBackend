@@ -57,8 +57,7 @@ create table sell_mode
 );
 insert sell_mode(name)
 values ('物品出售'),
-       ('物品出租'),
-       ('物品交换');
+       ('物品出租');
 
 --  发货方式表
 drop table if exists dispatch_mode;
@@ -110,9 +109,6 @@ values (1, 1, 1),
        (1, 2, 2),
        (1, 2, 3),
        (2, 2, 1),
-       (2, 2, 2),
-       (2, 2, 3),
-       (3, 2, 1),
        (2, 2, 3);
 
 --  商品列表
