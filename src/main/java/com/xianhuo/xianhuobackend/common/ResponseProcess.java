@@ -12,4 +12,12 @@ public class ResponseProcess<T> {
             return ResponseResult.ok(data,"success");
         }
     }
+
+    public static ResponseResult<String> returnString(Boolean flag,String success,String fail){
+        if(flag){
+            return ResponseResult.ok("1",success);
+        }
+        return ResponseResult.fail("0",fail);
+
+    }
 }
