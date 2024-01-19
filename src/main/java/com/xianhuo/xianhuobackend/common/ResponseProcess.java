@@ -13,6 +13,14 @@ public class ResponseProcess<T> {
         }
     }
 
+    public static <T> ResponseResult<T> returnObject(T data){
+        if (data.equals(null)){
+            return ResponseResult.fail(null,"fail");
+        }else{
+            return ResponseResult.ok(data,"success");
+        }
+    }
+
     public static ResponseResult<String> returnString(Boolean flag,String success,String fail){
         if(flag){
             return ResponseResult.ok("1",success);
