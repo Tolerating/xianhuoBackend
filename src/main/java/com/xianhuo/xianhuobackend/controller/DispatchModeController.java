@@ -25,4 +25,12 @@ public class DispatchModeController {
         List<DispatchMode> mode = dispatchModeService.getUsableDispatchModeBySellId(id);
         return ResponseProcess.returnList(mode);
     }
+
+    @GetMapping("/dispatchMode")
+    public ResponseResult<List<DispatchMode>> allUseableDispatch(){
+        LambdaQueryWrapper<DispatchMode> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DispatchMode::getStatus,1);
+        List<DispatchMode> list = dispatchModeService.list(wrapper);
+        return ResponseProcess.returnList(list);
+    }
 }

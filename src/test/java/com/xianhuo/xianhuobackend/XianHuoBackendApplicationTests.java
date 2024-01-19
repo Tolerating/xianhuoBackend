@@ -11,7 +11,8 @@ class XianHuoBackendApplicationTests {
     private DispatchModeService dispatchModeService;
     @Test
     void contextLoads() {
-        dispatchModeService.getUsableDispatchModeBySellId(1l);
+//        dispatchModeService.getUsableDispatchModeBySellId(1l);
+        System.out.println(System.getProperty("user.dir"));
     }
 
 }

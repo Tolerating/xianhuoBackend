@@ -1,5 +1,6 @@
 package com.xianhuo.xianhuobackend.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xianhuo.xianhuobackend.common.ResponseProcess;
 import com.xianhuo.xianhuobackend.common.ResponseResult;
 import com.xianhuo.xianhuobackend.entity.ProductRequire;
@@ -21,6 +22,14 @@ public class ProductRequireController {
     @GetMapping("/productRequire/{sellId}/{dispatchId}")
     public ResponseResult<List<ProductRequire>> requireBySellAndDispatch(@PathVariable(value = "sellId") long sellId, @PathVariable(value = "dispatchId") int dispatchId){
         List<ProductRequire> list = productRequireService.requireBySellAndDispatch(sellId, dispatchId);
+        return ResponseProcess.returnList(list);
+    }
+
+    @GetMapping("/productRequire")
+    public ResponseResult allUseableProductRequire(){
+        LambdaQueryWrapper<ProductRequire> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ProductRequire::getStatus,1);
+        List<ProductRequire> list = productRequireService.list(wrapper);
         return ResponseProcess.returnList(list);
     }
 }
