@@ -4,7 +4,7 @@ create table if not exists users
     name          varchar(100) not null comment '用户昵称',
     phone         varchar(50)  not null comment '电话',
     password      varchar(50)  not null comment '密码',
-    school_id     bigint       not null comment '学校id',
+    school     varchar(50)     not null comment '学校名字',
     avatar        text      default 'default.jpg' comment '用户头像',
     email         varchar(50) comment '邮箱地址',
     identity_card varchar(50) comment '身份证',
@@ -13,6 +13,7 @@ create table if not exists users
     faculty       varchar(100) comment '学院',
     major         varchar(100) comment '专业',
     birthday      timestamp comment '生日',
+    location      varchar(50) comment '学校所在定位',
     score         int comment '信誉分',
     created_at    timestamp default now() comment '创建时间',
     deleted_at    timestamp comment '删除时间'

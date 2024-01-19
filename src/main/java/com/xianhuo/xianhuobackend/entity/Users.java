@@ -28,7 +28,7 @@ public class Users {
     //密码
     private String password;
     //学校id
-    private Integer schoolId;
+    private String school;
     //用户头像
     private String avatar;
     //邮箱地址
@@ -50,6 +50,8 @@ public class Users {
     private Date birthday;
     //信誉分
     private Integer score;
+    //学校所在定位
+    private String location;
     //创建时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
