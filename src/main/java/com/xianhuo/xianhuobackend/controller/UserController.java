@@ -8,12 +8,16 @@ import com.xianhuo.xianhuobackend.service.UserService;
 import com.xianhuo.xianhuobackend.utils.JWTUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Response;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Random;
 
 @RestController
 @CrossOrigin
@@ -23,6 +27,10 @@ public class UserController {
     UserService userService;
     @Autowired
     HttpServletRequest httpServletRequest;
+    @Value("${spring.mail.username}")
+    private String from;
+    @Autowired
+    private JavaMailSender mailSender;
     @PostMapping("/login")
     public ResponseResult<Object> login(@RequestBody Users user){
         System.out.println(user);
@@ -55,6 +63,25 @@ public class UserController {
         String id = JWTUtil.parseJWT(authorization).getId();
         Users users = userService.getById(id);
         return ResponseProcess.returnObject(users);
+
+    }
+    @GetMapping("/mailCode")
+    public ResponseResult getCheckCode(String email){
+        String checkCode = String.valueOf(new Random().nextInt(899999) + 100000);
+        String msg = "您的注册验证码为："+checkCode;
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(from);
+            message.setTo(email);
+            message.setSubject("注册验证码");
+            message.setText(msg);
+            mailSender.send(message);
+
+        }catch (Exception e){
+            return null;
+        }
+        return ResponseResult.ok(checkCode,"mail");
+
 
     }
 }

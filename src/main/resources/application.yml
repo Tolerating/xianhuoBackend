@@ -8,9 +8,13 @@ spring:
     multipart:
       max-file-size: 15MB
       max-request-size: 15MB
+  mail:
+    default-encoding: utf-8
+    host: smtp.qq.com
+    username: 354378485@qq.com
+    password: iujnpndlxymabjih
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
 
 file-dir: "D:/nginx-1.22.1/html/"
