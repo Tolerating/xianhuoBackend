@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/","/api/user/login","/img/**");
+                .excludePathPatterns("/","/api/login","/img/**");
     }
 
     @Override
