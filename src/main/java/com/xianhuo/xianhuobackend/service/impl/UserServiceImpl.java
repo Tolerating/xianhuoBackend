@@ -16,10 +16,10 @@ public class UserServiceImpl extends ServiceImpl<UsersMapper,Users> implements U
     @Autowired
     private UsersMapper usersMapper;
     @Override
-    public Users loginPhone(Users users) {
+    public Users loginEmail(Users users) {
 
         LambdaQueryWrapper<Users> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Users::getPhone,users.getPhone())
+        wrapper.eq(Users::getEmail,users.getEmail())
                 .eq(Users::getPassword,users.getPassword());
 
         Users user = usersMapper.selectOne(wrapper);

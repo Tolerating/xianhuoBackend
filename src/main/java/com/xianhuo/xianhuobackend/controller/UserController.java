@@ -34,12 +34,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseResult<Object> login(@RequestBody Users user){
         System.out.println(user);
-        Users users = userService.loginPhone(user);
+        Users users = userService.loginEmail(user);
         if(users != null){
             String toekn = JWTUtil.createJWT(users.getId().toString(), "", "");
-//            HashMap<String, Object> hashMap = new HashMap<>();
-//            hashMap.put("token",toekn);
-//            hashMap.put("data",users);
             return ResponseResult.ok(toekn,"登录成功");
         }else{
 
