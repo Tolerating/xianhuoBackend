@@ -1,6 +1,7 @@
 package com.xianhuo.xianhuobackend.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.xianhuo.xianhuobackend.common.ResponseProcess;
 import com.xianhuo.xianhuobackend.common.ResponseResult;
 import com.xianhuo.xianhuobackend.entity.Users;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Response;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 @RestController
@@ -52,6 +54,27 @@ public class UserController {
                 .eq(Users::getId,userId);
         Users users = userService.getOne(wrapper);
         return ResponseProcess.returnObject(users);
+    }
+//    注册用户
+    @PostMapping("/register")
+    public ResponseResult registerByEmail(@RequestBody Users user) {
+        Users one = userService.getOne(new LambdaQueryWrapper<Users>().eq(Users::getEmail, user.getEmail()));
+        if (one!=null){
+            return ResponseResult.fail(null,"该账户已被注册");
+        }
+        boolean saved = userService.save(user);
+        return ResponseProcess.returnString(saved,"注册成功","注册失败");
+    }
+
+    @PostMapping("/updatePassword")
+    public ResponseResult updateByEmail(@RequestBody Users user){
+        Users one = userService.getOne(new LambdaQueryWrapper<Users>().eq(Users::getEmail, user.getEmail()));
+        if (one==null){
+            return ResponseResult.fail(null,"该账户不存在");
+        }
+        one.setPassword(user.getPassword());
+        boolean update = userService.updateById(one);
+        return ResponseProcess.returnString(update,"更新成功","更新失败");
     }
 
     @GetMapping("/user")
