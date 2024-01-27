@@ -4,7 +4,7 @@ create table if not exists users
     name          varchar(100) comment '用户昵称',
     phone         varchar(50)  comment '电话',
     password      varchar(50)  not null comment '密码',
-    school     varchar(50)     comment '学校名字',
+    school     varchar(50)     comment '学校名字,通过学校定位得到',
     avatar        text      default 'default.jpg' comment '用户头像',
     email         varchar(50) not null comment '邮箱地址',
     identity_card varchar(50) comment '身份证',
