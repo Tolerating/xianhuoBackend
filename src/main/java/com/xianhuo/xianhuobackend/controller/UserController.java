@@ -33,6 +33,7 @@ public class UserController {
     private String from;
     @Autowired
     private JavaMailSender mailSender;
+//    邮箱登录
     @PostMapping("/login")
     public ResponseResult<Object> login(@RequestBody Users user){
         System.out.println(user);
@@ -44,6 +45,20 @@ public class UserController {
 
             return ResponseResult.fail(users,"用户名或密码错误！");
         }
+    }
+//    完善用户信息
+    @PostMapping("/improveInfo")
+    public ResponseResult improveInfo(@RequestBody Users users){
+        String authorization = httpServletRequest.getHeader("authorization");
+        String id = JWTUtil.parseJWT(authorization).getId();
+        LambdaUpdateWrapper<Users> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.set(Users::getName,users.getName())
+                .set(Users::getAvatar,users.getAvatar())
+                .set(Users::getSchool,users.getSchool())
+                .set(Users::getLocation,users.getLocation())
+                .eq(Users::getId,id);
+        boolean update = userService.update(wrapper);
+        return ResponseProcess.returnString(update,"成功","更新失败");
     }
 
 //    根据userId获取部分信息
@@ -65,7 +80,7 @@ public class UserController {
         boolean saved = userService.save(user);
         return ResponseProcess.returnString(saved,"注册成功","注册失败");
     }
-
+// 根据邮箱更新密码
     @PostMapping("/updatePassword")
     public ResponseResult updateByEmail(@RequestBody Users user){
         Users one = userService.getOne(new LambdaQueryWrapper<Users>().eq(Users::getEmail, user.getEmail()));
@@ -77,6 +92,7 @@ public class UserController {
         return ResponseProcess.returnString(update,"更新成功","更新失败");
     }
 
+//    根据token获取用户信息
     @GetMapping("/user")
     public ResponseResult<Users> user(){
         String authorization = httpServletRequest.getHeader("authorization");
@@ -85,6 +101,7 @@ public class UserController {
         return ResponseProcess.returnObject(users);
 
     }
+//    发送邮箱验证码
     @GetMapping("/mailCode")
     public ResponseResult getCheckCode(String email){
         String checkCode = String.valueOf(new Random().nextInt(899999) + 100000);
