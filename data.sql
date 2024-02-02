@@ -130,6 +130,8 @@ create table product
     status           int        not null default 1 comment '商品状态，1表示在售，0表示售出，-1表示下架',
     location         varchar(50)    not null comment '商品所在学校定位',
     freight          decimal(20, 2) comment '运费',
+    province         varchar(10) comment '省份',
+    city             varchar(20) comment  '城市',
     create_time      timestamp               default now() comment '创建时间',
     update_time      timestamp comment '更新时间',
     delete_time timestamp comment '删除时间'
