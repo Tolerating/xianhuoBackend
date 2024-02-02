@@ -28,4 +28,12 @@ public class ResponseProcess<T> {
         return ResponseResult.fail("0",fail);
 
     }
+
+    public static ResponseResult<String> returnLong(Long flag,String success,String fail){
+        if(flag>0){
+            return ResponseResult.ok(flag.toString(),success);
+        }
+        return ResponseResult.fail(flag.toString(),fail);
+
+    }
 }
