@@ -46,7 +46,7 @@ public class UserController {
             return ResponseResult.fail(users,"用户名或密码错误！");
         }
     }
-//    完善用户信息
+    //    完善用户信息
     @PostMapping("/improveInfo")
     public ResponseResult improveInfo(@RequestBody Users users){
         String authorization = httpServletRequest.getHeader("authorization");
@@ -80,7 +80,7 @@ public class UserController {
         boolean saved = userService.save(user);
         return ResponseProcess.returnString(saved,"注册成功","注册失败");
     }
-// 根据邮箱更新密码
+    // 根据邮箱更新密码
     @PostMapping("/updatePassword")
     public ResponseResult updateByEmail(@RequestBody Users user){
         Users one = userService.getOne(new LambdaQueryWrapper<Users>().eq(Users::getEmail, user.getEmail()));
