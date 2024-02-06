@@ -39,8 +39,9 @@ public class UserController {
         System.out.println(user);
         Users users = userService.loginEmail(user);
         if(users != null){
-            String toekn = JWTUtil.createJWT(users.getId().toString(), "", "");
-            return ResponseResult.ok(String.format("%s,%s", users.getName(),toekn),"登录成功");
+            String token = JWTUtil.createJWT(users.getId().toString(), "", "");
+            System.out.println("token："+token);
+            return ResponseResult.ok(String.format("%s,%s", users.getName(),token),"登录成功");
         }else{
 
             return ResponseResult.fail(users,"用户名或密码错误！");
