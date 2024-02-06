@@ -25,6 +25,8 @@ public class ProductRequireController {
         return ResponseProcess.returnList(list);
     }
 
+//    返回所有有效的商品要求
+
     @GetMapping("/productRequire")
     public ResponseResult allUseableProductRequire(){
         LambdaQueryWrapper<ProductRequire> wrapper = new LambdaQueryWrapper<>();

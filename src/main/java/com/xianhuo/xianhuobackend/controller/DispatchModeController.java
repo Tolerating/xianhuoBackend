@@ -26,6 +26,7 @@ public class DispatchModeController {
         return ResponseProcess.returnList(mode);
     }
 
+//    返回所有的有效的发货方式
     @GetMapping("/dispatchMode")
     public ResponseResult<List<DispatchMode>> allUseableDispatch(){
         LambdaQueryWrapper<DispatchMode> wrapper = new LambdaQueryWrapper<>();

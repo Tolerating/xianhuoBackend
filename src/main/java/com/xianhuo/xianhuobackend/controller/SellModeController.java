@@ -18,6 +18,7 @@ public class SellModeController {
     @Autowired
     private SellModeService sellModeService;
 
+//    返回所有有效的售卖模式
     @GetMapping("/sellMode/{status}")
     public ResponseResult<List<SellMode>> allSellModeByStatus(@PathVariable(value = "status")int status){
         List<SellMode> list = sellModeService.list()
