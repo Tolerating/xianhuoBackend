@@ -4,7 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xianhuo.xianhuobackend.common.ResponseProcess;
 import com.xianhuo.xianhuobackend.common.ResponseResult;
 import com.xianhuo.xianhuobackend.entity.Product;
+import com.xianhuo.xianhuobackend.entity.SellMode;
+import com.xianhuo.xianhuobackend.entity.SellModeDispatchRequire;
+import com.xianhuo.xianhuobackend.service.DispatchModeService;
 import com.xianhuo.xianhuobackend.service.ProductService;
+import com.xianhuo.xianhuobackend.service.SellModeDIspatchRequireService;
+import com.xianhuo.xianhuobackend.service.SellModeService;
 import com.xianhuo.xianhuobackend.utils.JWTUtil;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,12 @@ import java.util.List;
 public class ProductController {
     @Autowired
     private ProductService productService;
+    @Autowired
+    private SellModeService sellModeService;
+    @Autowired
+    private DispatchModeService dispatchModeService;
+    @Autowired
+    private SellModeDIspatchRequireService sellModeDIspatchRequireService;
     @Autowired
     private HttpServletRequest httpServletRequest;
 
@@ -63,5 +74,11 @@ public class ProductController {
         String id = JWTUtil.parseJWT(authorization).getId();
         long count = productService.count(new LambdaQueryWrapper<Product>().eq(Product::getUserId, id));
         return ResponseProcess.returnLong(count,"success","fail");
+    }
+
+    @GetMapping("/modes")
+    public ResponseResult allModes(){
+        List<SellModeDispatchRequire> list = sellModeDIspatchRequireService.allMode();
+        return ResponseProcess.returnList(list);
     }
 }

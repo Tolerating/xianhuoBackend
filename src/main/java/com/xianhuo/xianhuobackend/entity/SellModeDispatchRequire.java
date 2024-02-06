@@ -3,6 +3,7 @@ package com.xianhuo.xianhuobackend.entity;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,10 +24,16 @@ public class SellModeDispatchRequire {
     private Long id;
 
     private Long sellModeId;
+    @TableField(exist = false)
+    private String sellName;
 
     private Long dispatchId;
+    @TableField(exist = false)
+    private String dispatchName;
 
     private Long productRequireId;
+    @TableField(exist = false)
+    private String productRequireName;
     //状态
     private Integer status;
     //创建时间
