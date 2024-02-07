@@ -58,6 +58,19 @@ public class ProductController {
         boolean saved = productService.save(product);
         return ResponseProcess.returnString(saved,"发布成功","发布失败");
     }
+
+//    更新商品
+    @PutMapping ("/product")
+    public ResponseResult updateProduct(@RequestBody Product product){
+        boolean updated = productService.updateById(product);
+        return ResponseProcess.returnString(updated,"更新成功","更新失败");
+    }
+
+    @DeleteMapping("/product/{productId}")
+    public ResponseResult deleteProduct(@PathVariable("productId") Long id){
+        boolean remove = productService.removeById(id);
+        return ResponseProcess.returnString(remove,"删除成功","删除失败");
+    }
 // 获取已经发布的商品
     @GetMapping("/product/released")
     public ResponseResult productReleased(){
@@ -76,6 +89,7 @@ public class ProductController {
         return ResponseProcess.returnLong(count,"success","fail");
     }
 
+//    获取商品要求对应的规则
     @GetMapping("/modes")
     public ResponseResult allModes(){
         List<SellModeDispatchRequire> list = sellModeDIspatchRequireService.allMode();
