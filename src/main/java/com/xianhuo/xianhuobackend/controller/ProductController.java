@@ -1,6 +1,9 @@
 package com.xianhuo.xianhuobackend.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xianhuo.xianhuobackend.common.ResponseProcess;
 import com.xianhuo.xianhuobackend.common.ResponseResult;
 import com.xianhuo.xianhuobackend.entity.Product;
@@ -26,17 +29,16 @@ public class ProductController {
     @Autowired
     private ProductService productService;
     @Autowired
-    private SellModeService sellModeService;
-    @Autowired
-    private DispatchModeService dispatchModeService;
-    @Autowired
     private SellModeDIspatchRequireService sellModeDIspatchRequireService;
     @Autowired
     private HttpServletRequest httpServletRequest;
 
+//    根据用户id获取已发布的商品
     @GetMapping("/product")
-    public List<Product> allProduct(){
-        return productService.list();
+    public ResponseResult<List<Product>> allProductByUserId(Long id){
+        List<Product> list = productService.list(new LambdaQueryWrapper<Product>()
+                .eq(Product::getUserId, id));
+        return ResponseProcess.returnList(list);
     }
 //    根据商品ID获取商品全部信息
     @GetMapping("/product/{productId}")
@@ -45,11 +47,36 @@ public class ProductController {
         return ResponseProcess.returnObject(product);
     }
 
-    //根据售卖模式获取商品
+    //根据售卖模式获取商品,分页获取
     @GetMapping("/product/sellMode/{sellModeId}")
-    public ResponseResult productBySellMode(Long sellModeId){
-//        productService.list
-        return null;
+    public ResponseResult productBySellMode(@PathVariable("sellModeId") Long sellModeId,Long current,Long size,String location){
+        Page<Product> page = new Page<>(current,size);
+        Page<Product> paged = productService.page(page, new LambdaQueryWrapper<Product>()
+                .eq(Product::getSellModeId, sellModeId)
+                .eq(Product::getLocation,location));
+        return ResponseProcess.returnObject(paged);
+    }
+
+    // 分页获取最新的数据
+    @GetMapping("/product/latest")
+    public ResponseResult latestProducts(Long current,Long size,String location){
+        Page<Product> page = new Page<>(current,size);
+        page.setMaxLimit(size);
+        Page<Product> paged = productService.page(page, new LambdaQueryWrapper<Product>()
+                .eq(Product::getLocation, location)
+                .orderByDesc(Product::getCreateTime));
+        return ResponseProcess.returnObject(paged);
+    }
+
+//    根据分类分页获取数据
+    @GetMapping("/product/category/{categoryId}")
+    public ResponseResult pageCategory(@PathVariable("categoryId") Long categoryId,Long current,Long size,String location){
+        Page<Product> page = new Page<>(current, size);
+        page.setMaxLimit(size);
+        Page<Product> paged = productService.page(page, new LambdaQueryWrapper<Product>()
+                .eq(Product::getCategoryId,categoryId)
+                .eq(Product::getLocation,location));
+        return ResponseProcess.returnObject(paged);
     }
 
 //    发布商品
@@ -66,10 +93,13 @@ public class ProductController {
         return ResponseProcess.returnString(updated,"更新成功","更新失败");
     }
 
-    @DeleteMapping("/product/{productId}")
-    public ResponseResult deleteProduct(@PathVariable("productId") Long id){
-        boolean remove = productService.removeById(id);
-        return ResponseProcess.returnString(remove,"删除成功","删除失败");
+//    标记商品已经下架(-1)或售出(0)
+    @DeleteMapping("/product/{productId}/{status}")
+    public ResponseResult deleteProduct(@PathVariable("productId") Long id,@PathVariable("status") Long status){
+        boolean updated = productService.update(new LambdaUpdateWrapper<Product>()
+                .set(Product::getStatus, status)
+                .eq(Product::getId, id));
+        return ResponseProcess.returnString(updated,"操作成功","操作失败");
     }
 // 获取已经发布的商品
     @GetMapping("/product/released")

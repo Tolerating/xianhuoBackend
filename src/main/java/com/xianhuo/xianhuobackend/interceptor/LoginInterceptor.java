@@ -2,6 +2,7 @@ package com.xianhuo.xianhuobackend.interceptor;
 
 import com.xianhuo.xianhuobackend.utils.JWTUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,16 +27,20 @@ public class LoginInterceptor implements HandlerInterceptor {
             handleFalseResponse(response);
             return false;
         }
-        Claims claims = JWTUtil.parseJWT(authorization);
-        Date now = new Date();
+
         // token未过期，放行
-        if (now.before(claims.getExpiration())) {
-            return true;
-        } else {
-            //前端响应处理
+        try{
+            Claims claims = JWTUtil.parseJWT(authorization);
+            Date now = new Date();
+            if (now.before(claims.getExpiration())) {
+                return true;
+            }
+        }catch (ExpiredJwtException e){
             handleFalseResponse(response);
             return false;
+
         }
+        return true;
     }
 
     private void handleFalseResponse(HttpServletResponse response) throws Exception {
