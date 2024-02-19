@@ -26,17 +26,15 @@ public class Favourite {
     @TableId(type = IdType.AUTO)
     private Long id;
     //用户id
-    private Long uid;
+    private Long userId;
     //商品id
-    private Long pid;
+    private Long productId;
     //创建时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-    //删除时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date deleteTime;
+    //状态，0表示未删除，1表示删除
+    private Integer status;
 
 }
 
