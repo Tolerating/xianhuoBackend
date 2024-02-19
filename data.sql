@@ -2,9 +2,9 @@ create table if not exists users
 (
     id            bigint primary key auto_increment,
     name          varchar(100) comment '用户昵称',
-    phone         varchar(50)  comment '电话',
-    password      varchar(50)  not null comment '密码',
-    school     varchar(50)     comment '学校名字,通过学校定位得到',
+    phone         varchar(50) comment '电话',
+    password      varchar(50) not null comment '密码',
+    school        varchar(50) comment '学校名字,通过学校定位得到',
     avatar        text      default 'default.jpg' comment '用户头像',
     email         varchar(50) not null comment '邮箱地址',
     identity_card varchar(50) comment '身份证',
@@ -22,8 +22,8 @@ create table if not exists users
 DROP TABLE IF EXISTS category;
 create table category
 (
-    id   bigint primary key auto_increment,
-    name varchar(50) not null comment '分类名称',
+    id          bigint primary key auto_increment,
+    name        varchar(50) not null comment '分类名称',
     status      boolean     not null default 1 comment '分类状态',
     create_time timestamp            default now() comment '创建时间',
     update_time timestamp comment '更新时间'
@@ -64,9 +64,9 @@ values ('物品出售'),
 drop table if exists dispatch_mode;
 create table dispatch_mode
 (
-    id     bigint primary key auto_increment comment '发货方式id',
-    name   varchar(50) not null comment '发货方式名字',
-    status boolean     not null default 1 comment '发货方式状态',
+    id          bigint primary key auto_increment comment '发货方式id',
+    name        varchar(50) not null comment '发货方式名字',
+    status      boolean     not null default 1 comment '发货方式状态',
     create_time timestamp            default now() comment '创建时间',
     update_time timestamp comment '更新时间'
 );
@@ -96,12 +96,12 @@ drop table if exists sell_mode_dispatch_require;
 create table sell_mode_dispatch_require
 (
     id                 bigint primary key auto_increment,
-    sell_mode_id       bigint not null,
-    dispatch_id        bigint not null,
-    product_require_id bigint not null,
-    status      boolean     not null default 1 comment '状态',
-    create_time timestamp            default now() comment '创建时间',
-    update_time timestamp comment '更新时间'
+    sell_mode_id       bigint  not null,
+    dispatch_id        bigint  not null,
+    product_require_id bigint  not null,
+    status             boolean not null default 1 comment '状态',
+    create_time        timestamp        default now() comment '创建时间',
+    update_time        timestamp comment '更新时间'
 );
 insert sell_mode_dispatch_require(sell_mode_id, dispatch_id, product_require_id)
 values (1, 1, 1),
@@ -116,34 +116,78 @@ values (1, 1, 1),
 drop table if exists product;
 create table product
 (
-    id               bigint primary key auto_increment comment '商品id',
-    category_id      bigint         not null comment '分类id',
-    detail           text           not null comment '商品详情',
-    images           text           not null comment '商品图片，以逗号分隔',
-    current_price    decimal(20, 2) not null comment '商品价格，保留两位小数',
-    time_unit        varchar(20) comment '物品出租时间计量单位',
-    origin_price     decimal(20, 2) default 0 comment '商品原价',
-    sell_mode_id     bigint         not null comment '出售方式id',
-    dispatch_mode_id bigint         not null comment '发货方式id',
-    user_id          bigint         not null comment '发布者id',
+    id                 bigint primary key auto_increment comment '商品id',
+    category_id        bigint         not null comment '分类id',
+    detail             text           not null comment '商品详情',
+    images             text           not null comment '商品图片，以逗号分隔',
+    current_price      decimal(20, 2) not null comment '商品价格，保留两位小数',
+    time_unit          varchar(20) comment '物品出租时间计量单位',
+    origin_price       decimal(20, 2)          default 0 comment '商品原价',
+    sell_mode_id       bigint         not null comment '出售方式id',
+    dispatch_mode_id   bigint         not null comment '发货方式id',
+    user_id            bigint         not null comment '发布者id',
     product_require_id varchar(10) comment '商品要求id,以逗号分隔',
-    status           int        not null default 1 comment '商品状态，1表示在售，0表示售出，-1表示下架',
-    location         varchar(50)    not null comment '商品所在学校定位',
-    freight          decimal(20, 2) default 0 comment '运费',
-    address         varchar(50) comment '完整地址',
-    create_time      timestamp               default now() comment '创建时间',
-    update_time      timestamp comment '更新时间',
-    delete_time timestamp comment '删除时间'
+    status             int            not null default 1 comment '商品状态，1表示在售，0表示售出，-1表示下架',
+    location           varchar(50)    not null comment '商品所在学校定位',
+    freight            decimal(20, 2)          default 0 comment '运费',
+    address            varchar(50) comment '完整地址',
+    create_time        timestamp               default now() comment '创建时间',
+    update_time        timestamp comment '更新时间',
+    delete_time        timestamp comment '删除时间'
 
 );
 
 -- 收藏夹表
 drop table if exists favourite;
-create table favourite(
-    id bigint primary key auto_increment comment '收藏id',
-    uId bigint not null comment '用户id',
-    pId bigint not null comment '商品id',
+create table favourite
+(
+    id          bigint primary key auto_increment comment '收藏id',
+    u_id         bigint not null comment '用户id',
+    p_id         bigint not null comment '商品id',
     create_time timestamp default now() comment '创建时间',
-    delete_time timestamp comment '删除时间'
-)
+    status int default 0 comment '状态，0表示未删除，1表示删除'
+);
+
+drop table if exists uni_id;
+create table uni_id
+(
+    id        bigint primary key auto_increment comment 'id',
+    xh_id     bigint       not null comment '闲货系统用户id',
+    uni_id    varchar(200) not null comment 'uni统一登录的用户id',
+    uni_token varchar(500) not null comment 'uni统一登录的token'
+);
+-- 用户聊天关系表
+create table chat_user_link
+(
+    link_id     bigint primary key auto_increment comment '聊天主表id',
+    from_user   bigint not null comment '发送方id',
+    to_user     bigint not null comment '接受者id',
+    create_time timestamp default now() comment '创建时间'
+);
+
+-- 聊天列表表
+create table chat_list
+(
+    `list_id`     bigint primary key auto_increment comment '聊天列表主键',
+    `link_id`     bigint NOT NULL COMMENT '聊天主表id',
+    `from_user`   bigint NOT NULL COMMENT '发送者',
+    `to_user`     bigint NOT NULL COMMENT '接收者',
+    `from_window` int    NULL DEFAULT NULL COMMENT '发送方是否在窗口',
+    `to_window`   int    NULL DEFAULT NULL COMMENT '接收方是否在窗口',
+    `unread`      int    NULL DEFAULT NULL COMMENT '未读数',
+    `status`      int    NULL DEFAULT NULL COMMENT '是否删除,0未删除，1删除'
+);
+
+-- 聊天内容详情表
+create table chat_message
+(
+    `message_id` bigint primary key auto_increment COMMENT '聊天内容id',
+    `link_id`    bigint NOT NULL COMMENT '聊天主表id',
+    `from_user`  bigint NOT NULL COMMENT '发送者',
+    `to_user`    bigint NOT NULL COMMENT '接收者',
+    `content`    varchar(255) NOT NULL COMMENT '聊天内容',
+    `send_time`  timestamp default now() COMMENT '发送时间',
+    `type`       int default 0 COMMENT '消息类型，0表示文本，1表示图片',
+    `is_latest`  int DEFAULT NULL COMMENT '是否为最后一条信息'
+);
 
