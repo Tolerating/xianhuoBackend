@@ -106,7 +106,9 @@ public class ProductController {
     public ResponseResult productReleased(){
         String authorization = httpServletRequest.getHeader("authorization");
         String id = JWTUtil.parseJWT(authorization).getId();
-        List<Product> list = productService.list(new LambdaQueryWrapper<Product>().eq(Product::getUserId, id));
+        List<Product> list = productService.list(new LambdaQueryWrapper<Product>()
+                .eq(Product::getUserId, id)
+                .eq(Product::getStatus,1));
         return ResponseProcess.returnList(list);
     }
 
@@ -115,7 +117,9 @@ public class ProductController {
     public ResponseResult productCount(){
         String authorization = httpServletRequest.getHeader("authorization");
         String id = JWTUtil.parseJWT(authorization).getId();
-        long count = productService.count(new LambdaQueryWrapper<Product>().eq(Product::getUserId, id));
+        long count = productService.count(new LambdaQueryWrapper<Product>()
+                .eq(Product::getUserId, id)
+                .eq(Product::getStatus,1));
         return ResponseProcess.returnLong(count,"success","fail");
     }
 
