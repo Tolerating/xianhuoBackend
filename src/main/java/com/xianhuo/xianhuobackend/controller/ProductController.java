@@ -21,6 +21,7 @@ import org.springframework.web.context.support.HttpRequestHandlerServlet;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -128,5 +129,17 @@ public class ProductController {
     public ResponseResult allModes(){
         List<SellModeDispatchRequire> list = sellModeDIspatchRequireService.allMode();
         return ResponseProcess.returnList(list);
+    }
+
+//    分页获取搜索商品
+    @GetMapping("/product/search")
+    public ResponseResult searchProduct(Long current,Long size,String productName,String location,Long sellMode,Long categoryId){
+        Page<Product> page = new Page<>(current, size);
+        Page<Product> paged = productService.page(page, new LambdaQueryWrapper<Product>()
+                .eq(!Objects.equals(location, ""), Product::getLocation, location)
+                .like(!Objects.equals(productName, ""), Product::getDetail, productName)
+                .eq(sellMode != 0, Product::getSellModeId, sellMode)
+                .eq(categoryId != 0, Product::getCategoryId, categoryId));
+        return ResponseProcess.returnObject(paged);
     }
 }
