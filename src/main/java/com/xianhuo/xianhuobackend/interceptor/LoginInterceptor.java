@@ -24,7 +24,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         System.out.println(uri);
         // authorization为空或为携带
         if(authorization == null || authorization.isEmpty()){
-            handleFalseResponse(response);
+            handleNotLoginResponse(response);
             return false;
         }
 
@@ -43,10 +43,20 @@ public class LoginInterceptor implements HandlerInterceptor {
         return true;
     }
 
+//    处理token 过期
     private void handleFalseResponse(HttpServletResponse response) throws Exception {
         response.setStatus(401);
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write("{\"message\":\"token过期，请重新登录\",\"code\":\"401\"}");
+        response.addHeader("Content-Type" ,
+                "application/json; charset=utf-8");
+        response.getWriter().flush();
+    }
+
+    private void handleNotLoginResponse(HttpServletResponse response) throws Exception {
+        response.setStatus(402);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"message\":\"请登录\",\"code\":\"402\"}");
         response.addHeader("Content-Type" ,
                 "application/json; charset=utf-8");
         response.getWriter().flush();
