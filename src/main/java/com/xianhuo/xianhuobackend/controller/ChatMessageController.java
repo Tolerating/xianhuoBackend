@@ -43,5 +43,13 @@ public class ChatMessageController {
         return ResponseProcess.returnObject(paged);
     }
 
+    //获取所有聊天记录
+    @GetMapping("/chatMessage/{linkId}")
+    public ResponseResult getAllMessageByLinkId(@PathVariable("linkId")Long id){
+        List<ChatMessage> list = chatMessageService.list(new LambdaQueryWrapper<ChatMessage>()
+                .eq(ChatMessage::getLinkId, id));
+        return ResponseProcess.returnList(list);
+    }
+
 }
 
