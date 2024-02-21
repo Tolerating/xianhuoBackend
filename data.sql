@@ -142,10 +142,10 @@ drop table if exists favourite;
 create table favourite
 (
     id          bigint primary key auto_increment comment '收藏id',
-    u_id         bigint not null comment '用户id',
-    p_id         bigint not null comment '商品id',
+    u_id        bigint not null comment '用户id',
+    p_id        bigint not null comment '商品id',
     create_time timestamp default now() comment '创建时间',
-    status int default 0 comment '状态，0表示未删除，1表示删除'
+    status      int       default 0 comment '状态，0表示未删除，1表示删除'
 );
 
 drop table if exists uni_id;
@@ -182,12 +182,26 @@ create table chat_list
 create table chat_message
 (
     `message_id` bigint primary key auto_increment COMMENT '聊天内容id',
-    `link_id`    bigint NOT NULL COMMENT '聊天主表id',
-    `from_user`  bigint NOT NULL COMMENT '发送者',
-    `to_user`    bigint NOT NULL COMMENT '接收者',
+    `link_id`    bigint       NOT NULL COMMENT '聊天主表id',
+    `from_user`  bigint       NOT NULL COMMENT '发送者',
+    `to_user`    bigint       NOT NULL COMMENT '接收者',
     `content`    varchar(255) NOT NULL COMMENT '聊天内容',
     `send_time`  timestamp default now() COMMENT '发送时间',
-    `type`       int default 0 COMMENT '消息类型，0表示文本，1表示图片',
-    `is_latest`  int DEFAULT NULL COMMENT '是否为最后一条信息'
+    `type`       int       default 0 COMMENT '消息类型，0表示文本，1表示图片',
+    `is_latest`  int       DEFAULT NULL COMMENT '是否为最后一条信息'
 );
 
+-- 需求信息表
+drop table if exists require_info;
+create table require_info
+(
+    id          bigint primary key auto_increment comment '需求id',
+    category_id bigint      not null comment '分类id',
+    detail      text           not null comment '需求详情',
+    user_id     bigint      not null comment '发布者id',
+    status      int         not null default 1 comment '商品状态，1表示需求未解决，-1表示下架',
+    location    varchar(50) not null comment '商品所在学校定位',
+    school      varchar(50) comment '学校名称',
+    create_time timestamp            default now() comment '创建时间'
+
+);
