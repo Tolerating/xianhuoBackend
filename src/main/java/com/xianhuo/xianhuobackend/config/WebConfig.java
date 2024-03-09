@@ -13,13 +13,13 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/","/api/login","/img/**");
+                .excludePathPatterns("/", "/api/login", "/img/**", "/api/alipay/notify", "/api/register", "/api//mailCode", "/api/updatePassword");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         WebMvcConfigurer.super.addResourceHandlers(registry);
         String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\productImg\\";
-        registry.addResourceHandler("/img/**").addResourceLocations("file:"+path);
+        registry.addResourceHandler("/img/**").addResourceLocations("file:" + path);
     }
 }
