@@ -1,3 +1,4 @@
+
 spring:
   datasource:
     username: root
@@ -8,13 +9,23 @@ spring:
     multipart:
       max-file-size: 15MB
       max-request-size: 15MB
+#  qq邮箱配置
   mail:
     default-encoding: utf-8
     host: smtp.qq.com
     username: 354378485@qq.com
     password: iujnpndlxymabjih
+
 mybatis-plus:
   configuration:
+#    日志级别配置
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
+# 图片上传路径
 file-dir: "D:/nginx-1.22.1/html/"
+alipay:
+  appid: 9021000134661653
+  appPrivateKey: MIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCFAVhlm7xPzYefkAsvESgTQlj6Df6oPdjZNQcYgQHnBaoYG4GjzREKzCuwvI31tOZKne7NtOpdvTKlLPE8ZqxCJSQ7wtwt+ZGjxT+O+FDHTZu7PAKrkGch8aR2l2aDXWLbNYKPP4kq6iA+QmOP8lDJbZ+iEjHg+cQdb3JYfpjFtLC4cAHo0ZblJwH3uyCdALhr0slgpCE0SRdRyotKEg1D8GV4of80VPJz6U0oS6H3LqhFijZOUioJmfETbPQgiVHhnF96WTvOU6ZDjqLMpfQdzGWytk1VEDK+1osnHcF4PhNgRQE9feHPKjbmwpKM31kMIzLQk1B0latQsbyllPtJAgMBAAECggEAOEsbeNXzW+tnjZdPxHoEdjJMqnkl4Vtb3oLdH/fqMDdriIyL0CJJJkLH8yO7CdWo6sfxfMsnrskXGGXvLFtgaRaDQW/19Nd+VsxzXDWpKtGkKhj6IFcb73fw3eiykMMDxjfdrHd9vNYfE3rR3Oj4XGizecstpUTRRowW33Glg3eXr9bB3NsDal9GjNUxkotmEwKtPP8G9W1lSRYTEYvEd4RYmvzZVn86N87jrPyA+s0KU7F32IUsb9idaUvAYQh6XKlubapPF6On6DvQWNZoCdLXIDmvkVzmN9Y98GhBggwh6zwBQBPdLHvSEPPO2pEpw2C7isIRRcROiBSMJBN46QKBgQDr1NxBrdnITLiJMpNmjFGvMJZqNAzhlcr86j644XPEjL1eR6epIxKBclu7PsBAf+BcdN2fn0aG5l8ODJJvs06yYokRU6v7RUowAOSHLVWMHqne1pwuBf1cuGXI4mR7kky+HngFsfWZpCw9OOA5QxsIKx2J6sOxvkRsABGO+jSuawKBgQCQYUZk9Pvm/BUM9BQxraB3dhx95FxK7hBJj7L9QRKXK6oe6qNIgaqKVwYW/6ypXjh8gG/wPoNxLgAC4wiS9vU5k61LPjRXpU7xlQwLAPPGE76tJrQavW6m8wlR4zS+BdxT4OUHitIV676MDCcNiAIvgEub1XXf8iBnT5BInO1CGwJ/PqRL3SZQsuOuIMNOY+7hw6ckTRGGWmVvhb6y6mj4Vz0LD//4iPTH9Zpqw1Hnvzo4Xlash7nHAg4vMYwlWYZHYRrLTc7r39KH4jhae42PK6j5djeLRK5Snk5cuv9nsWsq91UgjGK42hbBqYFyDcPFamYJcpjpYk0n34glIdVUKQKBgBzTnzd3BniG6jkM3p9QmFJhvayRFLBNOelGDKmt/WU7bZsApBtM8FzwpSGgaLvkOQj6p97izGGjmpL4+3REZI/bYWU9hTveoJVxedcUmJd6x75QlPMl0Vr5+WllINmz19rTc0b/O5Tu3buejYmRF0aeqfnyM7fD4x5db2RgGKrzAoGAZhkE1DYYZrKjsFZEK0NplwI5tyIg7/HjP5Yv/8FNifqMwr8gp833f+4STyyVnnaVEaUiTXhGRyc4tA6ND1/BI5OiCUCHESaxR4Uzzvr5UfMuPOuVkF16VzN9tZFKYrJ7zoeRyRVLTQoo+sXTTcNc45GglNnBaYtGy6JUA2cKoag=
+  alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqUbFvzbOu1WdURYLHHAXDMcqKg6d2DKWb16lDFG5Gt6JNAxc8+8wOdOf2snRR+ZKyoPSGj86WkpHldt0L2PoeUVqIqeiQRe2p3QRyLoAY7RErecVoUnZrhYLc0HIT5Zt6mlnH47X8H8vAo4+s+dc/q9xlqYRkArIjugL4+S4F/Dn6wF9qJQPTVLLz8ishjasXrBxz7FEYkbd7BVEt2IE4ulVpQaYXhUvr6ZdYX/iChmEAz7vuhi1sv3b/HhsnMZp71my00FOUcTsy6UcP/vYwB1g/sK6TH0z+AQ0NvqUPprmdggCF9mKgpHwdUwtibYMfsx38oATnGiDOLLiwnp0uwIDAQAB
+  notifyUrl:  http://t44txe.natappfree.cc/api/alipay/notify
+server:
+  port: 40001
