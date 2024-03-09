@@ -5,8 +5,9 @@ create table if not exists users
     phone         varchar(50) comment '电话',
     password      varchar(50) not null comment '密码',
     school        varchar(50) comment '学校名字,通过学校定位得到',
-    avatar        text      default 'default.jpg' comment '用户头像',
+    avatar        text           default 'default.jpg' comment '用户头像',
     email         varchar(50) not null comment '邮箱地址',
+    profit        decimal(20, 2) default 0.00 comment '我的收益',
     identity_card varchar(50) comment '身份证',
     stu_number    varchar(50) comment '学生学号',
     grade         varchar(50) comment '班级',
@@ -15,7 +16,7 @@ create table if not exists users
     birthday      timestamp comment '生日',
     location      varchar(50) comment '学校所在定位',
     score         int comment '信誉分',
-    created_at    timestamp default now() comment '创建时间',
+    created_at    timestamp      default now() comment '创建时间',
     deleted_at    timestamp comment '删除时间'
 );
 
@@ -197,11 +198,36 @@ create table require_info
 (
     id          bigint primary key auto_increment comment '需求id',
     category_id bigint      not null comment '分类id',
-    detail      text           not null comment '需求详情',
+    detail      text        not null comment '需求详情',
     user_id     bigint      not null comment '发布者id',
     status      int         not null default 1 comment '商品状态，1表示需求未解决，-1表示下架',
     location    varchar(50) not null comment '商品所在学校定位',
     school      varchar(50) comment '学校名称',
     create_time timestamp            default now() comment '创建时间'
+
+);
+-- 订单表
+drop table if exists order_info;
+create table order_info
+(
+    id                bigint primary key auto_increment comment '订单表id',
+    order_id          varchar(200) not null comment '订单编号',
+    product_detail    text comment '商品描述',
+    product_images    text comment '商品图片',
+    product_address   varchar(100) comment '商品地址',
+    product_category  bigint comment '商品分类',
+    buy_id            bigint       not null comment '咸货系统支付者id',
+    sell_id           bigint       not null comment '咸货系统出售者id',
+    alipay_id         bigint comment '支付宝订单号',
+    product_id        bigint       not null comment '商品id',
+    type              int            default 1 comment '支付类型，1表示支付宝，2表示微信',
+    total             decimal(20, 2) default 0.0 comment '支付金额',
+    buyer_sys_id      bigint comment '支付平台购买者用户id',
+    buyer_sys_account varchar(100) comment '支付平台购买用户账号',
+    status            int            default -1 comment '商品状态，1表示已支付，-1表示未支付',
+    buyer_status      int            default 0 comment '购买者收货状态，1表示确认收货，0表示未确认',
+    seller_status     int            default 0 comment '出售者发货状态，1表示已发货，0表示未发货',
+    create_time       timestamp      default now() comment '创建时间',
+    pay_time          timestamp comment '支付时间'
 
 );
