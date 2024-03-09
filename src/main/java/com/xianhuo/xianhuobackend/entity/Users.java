@@ -33,6 +33,8 @@ public class Users {
     private String avatar;
     //邮箱地址
     private String email;
+//    我的收益
+    private Double profit;
     //身份证
     private String identityCard;
     //学生学号
