@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Response;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -25,8 +26,13 @@ public class RequireInfoController {
     HttpServletRequest httpServletRequest;
     @PostMapping("/requireInfo")
     public ResponseResult addInfo(@RequestBody RequireInfo requireInfo){
+        long rId = new Date().getTime();
+        requireInfo.setId(rId);
         boolean saved = requireInfoService.save(requireInfo);
-        return ResponseProcess.returnString(saved,"需求发布成功","需求发布失败");
+        if(saved){
+            return ResponseResult.ok(rId,"发布成功");
+        }
+        return ResponseResult.fail(null,"发布失败");
     }
 
 //    分页获取需求
@@ -68,7 +74,7 @@ public class RequireInfoController {
     }
 
     @GetMapping("/requireInfo/cancle/{id}")
-    public ResponseResult cancelInfo(@PathVariable("id")Integer id){
+    public ResponseResult cancelInfo(@PathVariable("id")Long id){
         boolean update = requireInfoService.update(new LambdaUpdateWrapper<RequireInfo>()
                 .set(RequireInfo::getStatus, -1)
                 .eq(RequireInfo::getId, id));
