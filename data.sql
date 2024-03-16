@@ -16,6 +16,7 @@ create table if not exists users
     birthday      timestamp comment '生日',
     location      varchar(50) comment '学校所在定位',
     score         int comment '信誉分',
+    in_chat       int            default 0 comment '是否在聊天页',
     created_at    timestamp      default now() comment '创建时间',
     deleted_at    timestamp comment '删除时间'
 );
@@ -224,10 +225,76 @@ create table order_info
     total             decimal(20, 2) default 0.0 comment '支付金额',
     buyer_sys_id      bigint comment '支付平台购买者用户id',
     buyer_sys_account varchar(100) comment '支付平台购买用户账号',
-    status            int            default -1 comment '商品状态，1表示已支付，-1表示未支付',
+    status            int            default -1 comment '商品状态，1表示已支付，-1表示未支付,2表示售后处理中，0表示已退款',
     buyer_status      int            default 0 comment '购买者收货状态，1表示确认收货，0表示未确认',
     seller_status     int            default 0 comment '出售者发货状态，1表示已发货，0表示未发货',
     create_time       timestamp      default now() comment '创建时间',
     pay_time          timestamp comment '支付时间'
 
 );
+
+-- 管理员表
+drop table if exists admin_user;
+create table admin_user
+(
+    id          bigint primary key auto_increment comment '管理员id',
+    account     varchar(100) not null comment '管理员账号',
+    password    varchar(100) not null comment '管理员密码',
+    authority   int       default 0 comment '1表示超级管理员，0表示校园管理员',
+    school      varchar(100) comment '学校定位，用于校园管理员',
+    create_time timestamp default now() comment '创建时间'
+);
+
+-- 投诉表
+drop table if exists complain;
+create table complain
+(
+    id                  bigint primary key auto_increment comment '投诉表主键',
+    complainant_id      bigint not null comment '投诉人id',
+    complainant_cause   varchar(200) comment '投诉原因',
+    complainant_subject bigint not null comment '被投诉的商品或帖子',
+    seller_id           bigint not null comment '被投诉人id',
+    type                int    not null default 1 comment '投诉类别，1表示商品，0表示求购帖子',
+    deal_user           bigint comment '处理人id',
+    deal_method         varchar(100) comment '处理方式描述',
+    create_time         timestamp       default now() comment '投诉时间',
+    deal_time           timestamp comment '处理时间'
+
+) comment '投诉表';
+
+
+-- 官方通知表
+drop table if exists notice;
+create table notice
+(
+    id          bigint primary key auto_increment comment '主键',
+    title       varchar(50)  not null comment '通知标题',
+    content     varchar(200) not null comment '通知内容',
+    receiver_id bigint       not null comment '通知接收者id',
+    create_time timestamp default now() comment '创建时间'
+) comment '官方通知';
+
+
+-- 售后表
+drop table if exists after_service;
+create table after_service
+(
+    id                  bigint primary key auto_increment comment '主键',
+    buyer_id            bigint not null comment '买家id',
+    cause               varchar(200) comment '退货原因',
+    product_detail      text comment '商品描述',
+    product_price       decimal(20,2) comment '商品金额',
+    images              text comment '图片,逗号分隔',
+    product_id          bigint not null comment '商品id',
+    order_id            bigint not null comment '订单表商家订单id',
+    seller_id           bigint not null comment '卖家id',
+    seller_status       int       default 0 comment '商家处理状态，0为等待商家处理，1为商家同意，2表示商家不同意，',
+    seller_refuse_cause varchar(200) comment '商家拒绝原因',
+    seller_deal_time    timestamp comment '商家处理时间',
+    platform_status     int       default -1 comment '平台处理状态，-1表示平台未介入，0表示平台介入，1表示处理完成',
+    platform_result     varchar(200) comment '平台处理结果',
+    platform_user       bigint comment '处理人id',
+    status              int       default 0 comment '售后表状态，0表示售后处理中，-1表示售后失败，1表示售后成功',
+    platform_deal_time  timestamp comment '平台处理时间',
+    create_time         timestamp default now() comment '创建时间'
+) comment '售后表';

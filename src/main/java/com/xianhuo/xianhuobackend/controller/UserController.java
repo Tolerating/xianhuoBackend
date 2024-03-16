@@ -170,6 +170,17 @@ public class UserController {
         return ResponseProcess.returnObject(users);
 
     }
+    //更新用户是否在聊天页
+    @GetMapping("/inChat")
+    public ResponseResult updateInChat(Integer status){
+        String authorization = httpServletRequest.getHeader("authorization");
+        String id = JWTUtil.parseJWT(authorization).getId();
+        boolean update = userService.update(new LambdaUpdateWrapper<Users>()
+                .set(Users::getInChat, status)
+                .eq(Users::getId, id));
+        return ResponseProcess.returnString(update,"sueccess","fail");
+
+    }
 //    发送邮箱验证码
     @GetMapping("/mailCode")
     public ResponseResult getCheckCode(String email){

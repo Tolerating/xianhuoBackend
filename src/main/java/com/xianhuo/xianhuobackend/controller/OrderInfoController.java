@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.xianhuo.xianhuobackend.common.ResponseProcess;
 import com.xianhuo.xianhuobackend.common.ResponseResult;
+import com.xianhuo.xianhuobackend.entity.AfterService;
 import com.xianhuo.xianhuobackend.entity.OrderInfo;
 import com.xianhuo.xianhuobackend.entity.Users;
+import com.xianhuo.xianhuobackend.service.AfterServiceService;
 import com.xianhuo.xianhuobackend.service.OrderInfoService;
 import com.xianhuo.xianhuobackend.service.UserService;
 import com.xianhuo.xianhuobackend.utils.JWTUtil;
@@ -36,6 +38,8 @@ public class OrderInfoController {
     private OrderInfoService orderInfoService;
     @Resource
     private UserService userService;
+    @Resource
+    private AfterServiceService afterServiceService;
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -142,6 +146,10 @@ public class OrderInfoController {
                 .eq(OrderInfo::getSellId, id)
                 .eq(OrderInfo::getSellerStatus, 1)
                 .eq(OrderInfo::getBuyerStatus, 1));
+        long afterService = afterServiceService.count(new LambdaQueryWrapper<AfterService>()
+                .eq(AfterService::getBuyerId,id)
+                .or()
+                .eq(AfterService::getSellerId,id));
         Users users = userService.getById(id);
         Map<String, String> map = new HashMap<>();
         map.put("dispatch", String.valueOf(dispatch));
@@ -149,8 +157,17 @@ public class OrderInfoController {
         map.put("buy", String.valueOf(buy));
         map.put("sell", String.valueOf(sell));
         map.put("profit",users.getProfit().toString());
+        map.put("after", String.valueOf(afterService));
 
         return ResponseResult.ok(map,"success");
+    }
+// 更新订单状态
+    @GetMapping("/orderInfo/status")
+    public ResponseResult updateStatus(Long id,Integer status){
+        boolean update = orderInfoService.update(new LambdaUpdateWrapper<OrderInfo>()
+                .set(OrderInfo::getStatus, status)
+                .eq(OrderInfo::getOrderId, id));
+        return ResponseProcess.returnString(update,"success","fail");
     }
 
 

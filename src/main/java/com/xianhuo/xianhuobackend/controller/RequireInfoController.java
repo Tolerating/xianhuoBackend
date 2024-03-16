@@ -68,7 +68,8 @@ public class RequireInfoController {
         String authorization = httpServletRequest.getHeader("authorization");
         String id = JWTUtil.parseJWT(authorization).getId();
         List<RequireInfo> list = requireInfoService.list(new LambdaQueryWrapper<RequireInfo>()
-                .eq(RequireInfo::getUserId, id));
+                .eq(RequireInfo::getUserId, id)
+                .eq(RequireInfo::getStatus,1));
         return ResponseProcess.returnList(list);
 
     }

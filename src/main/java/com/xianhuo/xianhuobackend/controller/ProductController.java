@@ -39,7 +39,8 @@ public class ProductController {
     @GetMapping("/product")
     public ResponseResult<List<Product>> allProductByUserId(Long id) {
         List<Product> list = productService.list(new LambdaQueryWrapper<Product>()
-                .eq(Product::getUserId, id));
+                .eq(Product::getUserId, id)
+                .eq(Product::getStatus,1));
         return ResponseProcess.returnList(list);
     }
 

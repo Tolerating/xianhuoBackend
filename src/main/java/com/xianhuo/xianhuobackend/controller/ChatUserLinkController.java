@@ -101,27 +101,5 @@ public class ChatUserLinkController {
         boolean saved = chatUserLinkService.save(chatUserLink);
         return ResponseProcess.returnString(saved,"添加成功","添加失败");
     }
-//
-//    /**
-//     * 修改数据
-//     *
-//     * @param chatUserLink 实体对象
-//     * @return 修改结果
-//     */
-//    @PutMapping
-//    public R update(@RequestBody ChatUserLink chatUserLink) {
-//        return success(this.chatUserLinkService.updateById(chatUserLink));
-//    }
-//
-//    /**
-//     * 删除数据
-//     *
-//     * @param idList 主键结合
-//     * @return 删除结果
-//     */
-//    @DeleteMapping
-//    public R delete(@RequestParam("idList") List<Long> idList) {
-//        return success(this.chatUserLinkService.removeByIds(idList));
-//    }
 }
 

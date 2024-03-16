@@ -52,6 +52,8 @@ public class Users {
     private Date birthday;
     //信誉分
     private Integer score;
+//    是否在聊天页
+    private Integer inChat;
     //学校所在定位
     private String location;
     //创建时间
