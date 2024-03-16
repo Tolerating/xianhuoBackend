@@ -3,6 +3,7 @@ package com.xianhuo.xianhuobackend.config;
 import com.xianhuo.xianhuobackend.controller.MyWebSocket;
 import com.xianhuo.xianhuobackend.service.ChatListService;
 import com.xianhuo.xianhuobackend.service.ChatMessageService;
+import com.xianhuo.xianhuobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +28,10 @@ public class WebSocketConfig extends ServerEndpointConfig.Configurator{
     }
 
     @Autowired
-    public void setSenderService(ChatListService chatListService, ChatMessageService chatMessageService){
+    public void setSenderService(ChatListService chatListService, ChatMessageService chatMessageService, UserService userService){
         MyWebSocket.chatListService = chatListService;
         MyWebSocket.chatMessageService = chatMessageService;
+        MyWebSocket.userService = userService;
     }
 
 }
