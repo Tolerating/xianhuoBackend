@@ -3,10 +3,13 @@ package com.xianhuo.xianhuobackend.entity;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -16,6 +19,8 @@ import org.springframework.format.annotation.DateTimeFormat;
  * @since 2024-01-13 14:40:06
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("product")
 @SuppressWarnings("serial")
 public class Product {
@@ -24,6 +29,9 @@ public class Product {
     private Long id;
     //分类id
     private Long categoryId;
+//    分类名称
+    @TableField(exist = false)
+    private String categoryName;
     //商品详情
     private String detail;
     //商品图片，以逗号分隔
@@ -40,8 +48,14 @@ public class Product {
     private Long dispatchModeId;
     //发布者id
     private Long userId;
+//    发布者
+    @TableField(exist = false)
+    private String publisher;
     //商品要求id,以逗号分隔
     private String productRequireId;
+//    商品要求名字，逗号分隔
+    @TableField(exist = false)
+    private String requireNames;
     //商品状态，1表示在售，0表示售出，-1表示下架
     private Integer status;
     //商品所在学校定位
@@ -63,6 +77,28 @@ public class Product {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date deleteTime;
 
-
+    public Product(Product p) {
+        this.id = p.getId();
+        this.categoryId = p.getCategoryId();
+        this.categoryName = p.getCategoryName();
+        this.detail = p.getDetail();
+        this.images = p.getImages();
+        this.currentPrice = p.getCurrentPrice();
+        this.timeUnit = p.getTimeUnit();
+        this.originPrice = p.getOriginPrice();
+        this.sellModeId = p.getSellModeId();
+        this.dispatchModeId = p.getDispatchModeId();
+        this.userId = p.getUserId();
+        this.publisher = p.getPublisher();
+        this.productRequireId = p.getProductRequireId();
+        this.requireNames = p.getRequireNames();
+        this.status = p.getStatus();
+        this.location = p.getLocation();
+        this.freight = p.getFreight();
+        this.address = p.getAddress();
+        this.createTime = p.getCreateTime();
+        this.updateTime = p.getUpdateTime();
+        this.deleteTime = p.getDeleteTime();
+    }
 }
 

@@ -53,6 +53,8 @@ public class ChatList {
     private Integer status;
     @TableField(exist = false)
     private String content;
+    @TableField(exist = false)
+    private String type;
     //发送时间
     @TableField(exist = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

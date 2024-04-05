@@ -1,6 +1,7 @@
 package com.xianhuo.xianhuobackend.controller;
 
 import cn.hutool.json.JSONObject;
+import com.alipay.api.AlipayApiException;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
@@ -21,34 +22,29 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+
+import com.xianhuo.xianhuobackend.config.Common;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api")
 public class AliPayController {
-//    支付宝沙箱网关地址
-    private static final String GATEWAY_URL = "https://openapi-sandbox.dl.alipaydev.com/gateway.do";
-        private static final String FORMAT = "JSON";
-    private static final String CHARSET = "UTF-8";
-//    签名方式
-    private static final String SIGN_TYPE = "RSA2";
+
     @Resource
     private AliPayConfig aliPayConfig;
     @Resource
     private OrderInfoService orderInfoService;
     @Resource
     private ProductService productService;
+//    支付接口
     @GetMapping("/pay")
     public ResponseResult pay(String orderNo, HttpServletResponse httpServletResponse) throws Exception{
 //        查询订单信息
         OrderInfo order = orderInfoService.getOne(new LambdaQueryWrapper<OrderInfo>()
                 .eq(OrderInfo::getOrderId, orderNo));
 //        1.创建Client，通过sdk提供的Client，负责调用支付宝的API
-        DefaultAlipayClient alipayClient = new DefaultAlipayClient(GATEWAY_URL, aliPayConfig.getAppid(), aliPayConfig.getAppPrivateKey(), FORMAT, CHARSET, aliPayConfig.getAlipayPublicKey(), SIGN_TYPE);
+        DefaultAlipayClient alipayClient = new DefaultAlipayClient(Common.GATEWAY_URL, aliPayConfig.getAppid(), aliPayConfig.getAppPrivateKey(), Common.FORMAT, Common.CHARSET, aliPayConfig.getAlipayPublicKey(), Common.SIGN_TYPE);
 //        2.创建Request并设置Request参数
         AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
         Product product = productService.getById(order.getProductId());
@@ -71,6 +67,7 @@ public class AliPayController {
             return  ResponseResult.fail(orderStr,"支付失败");
         }
     }
+//    支付成功通知接口
     @PostMapping("/alipay/notify")
     public void payNotify(HttpServletRequest request) throws Exception{
         Map< String , String > params = new HashMap < String , String > ();
@@ -88,27 +85,29 @@ public class AliPayController {
         }
         //切记alipaypublickey是支付宝的公钥，请去open.alipay.com对应应用下查看。
         //boolean AlipaySignature.rsaCheckV1(Map<String, String> params, String publicKey, String charset, String sign_type)
-        boolean flag = AlipaySignature.rsaCheckV1 (params,aliPayConfig.getAlipayPublicKey(), CHARSET,SIGN_TYPE);
+        boolean flag = AlipaySignature.rsaCheckV1 (params,aliPayConfig.getAlipayPublicKey(), Common.CHARSET,Common.SIGN_TYPE);
         if(flag){
-            String tradeNo = params.get("out_trade_no");
-            String gmtPayment = params.get("gmt_payment");
-            String totalAmount = params.get("total_amount");
-            String alipayTradeNo = params.get("trade_no");
-            String buyerId = params.get("buyer_id");
-            String buyerLogonId = params.get("buyer_logon_id");
-            OrderInfo order = orderInfoService.getOne(new LambdaQueryWrapper<OrderInfo>().eq(OrderInfo::getOrderId, tradeNo));
-            order.setStatus(1);
-            order.setBuyerSysId(Long.valueOf(buyerId));
-            order.setBuyerSysAccount(buyerLogonId);
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            order.setPayTime(simpleDateFormat.parse(gmtPayment));
-            order.setAlipayId(alipayTradeNo);
-            order.setTotal(Double.valueOf(totalAmount));
-            orderInfoService.update(order, new LambdaQueryWrapper<OrderInfo>().eq(OrderInfo::getOrderId, tradeNo));
-            OrderInfo orderInfo = orderInfoService.getOne(new LambdaQueryWrapper<OrderInfo>().eq(OrderInfo::getOrderId, tradeNo));
-            productService.update(new LambdaUpdateWrapper<Product>()
-                    .set(Product::getStatus,0)
-                    .eq(Product::getId,orderInfo.getProductId()));
+            if(Objects.equals(params.get("trade_status"), "TRADE_SUCCESS")){
+                String tradeNo = params.get("out_trade_no");
+                String gmtPayment = params.get("gmt_payment");
+                String totalAmount = params.get("total_amount");
+                String alipayTradeNo = params.get("trade_no");
+                String buyerId = params.get("buyer_id");
+                String buyerLogonId = params.get("buyer_logon_id");
+                OrderInfo order = orderInfoService.getOne(new LambdaQueryWrapper<OrderInfo>().eq(OrderInfo::getOrderId, tradeNo));
+                order.setStatus(1);
+                order.setBuyerSysId(Long.valueOf(buyerId));
+                order.setBuyerSysAccount(buyerLogonId);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                order.setPayTime(simpleDateFormat.parse(gmtPayment));
+                order.setAlipayId(alipayTradeNo);
+                order.setTotal(Double.valueOf(totalAmount));
+                orderInfoService.update(order, new LambdaQueryWrapper<OrderInfo>().eq(OrderInfo::getOrderId, tradeNo));
+                OrderInfo orderInfo = orderInfoService.getOne(new LambdaQueryWrapper<OrderInfo>().eq(OrderInfo::getOrderId, tradeNo));
+                productService.update(new LambdaUpdateWrapper<Product>()
+                        .set(Product::getStatus,0)
+                        .eq(Product::getId,orderInfo.getProductId()));
+            }
         }
     }
 }

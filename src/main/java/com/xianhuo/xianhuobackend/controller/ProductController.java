@@ -133,7 +133,7 @@ public class ProductController {
         long count = productService.count(new LambdaQueryWrapper<Product>()
                 .eq(Product::getUserId, id)
                 .eq(Product::getStatus, 1));
-        return ResponseProcess.returnLong(count, "success", "fail");
+        return ResponseResult.ok(count,"success");
     }
 
     //    获取商品要求对应的规则

@@ -3,6 +3,7 @@ package com.xianhuo.xianhuobackend.entity;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -27,6 +28,8 @@ public class RequireInfo {
     private Long id;
     //分类id
     private Long categoryId;
+    @TableField(exist = false)
+    private String categoryName;
     //需求详情
     private String detail;
     //发布者id

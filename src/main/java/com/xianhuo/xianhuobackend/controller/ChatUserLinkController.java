@@ -4,6 +4,7 @@ package com.xianhuo.xianhuobackend.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xianhuo.xianhuobackend.common.ResponseProcess;
 import com.xianhuo.xianhuobackend.common.ResponseResult;
@@ -87,6 +88,10 @@ public class ChatUserLinkController {
             }
 
         }
+        chatListService.update(new LambdaUpdateWrapper<ChatList>()
+                .set(ChatList::getStatus,0)
+                .eq(ChatList::getFromUser,fromUser)
+                .eq(ChatList::getToUser,toUser));
         return ResponseResult.ok(one,"success");
     }
 

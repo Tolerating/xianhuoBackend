@@ -49,7 +49,7 @@ public class MyWebSocket {
     //聊天逻辑层service
     public static ChatMessageService chatMessageService;
     public static ChatListService chatListService;
-    public  static UserService userService;
+    public static UserService userService;
 
 
     /**
@@ -59,7 +59,7 @@ public class MyWebSocket {
     public void onOpen(Session session, @PathParam("id") Long fromUser, EndpointConfig config) {
         this.session = session;
         this.username = fromUser;
-        if(socketSessions.map.get(username) == null){
+        if (socketSessions.map.get(username) == null) {
             //绑定username与session
             socketSessions.map.put(username, session);
             //加入set中
@@ -95,51 +95,51 @@ public class MyWebSocket {
 //                Map<String,Object> map = objectMapper.readValue(message, Map.class);
 //                if(map.get("showType").equals("chat")){
 //                    发送聊天消息
-                    ChatMessage chatMsg = objectMapper.readValue(message, ChatMessage.class);
-                    System.out.println(chatMsg);
-                    //对chatMsg进行装箱
-                    chatMsg.setIsLatest(1);
-                    chatMsg.setType(0);
+                ChatMessage chatMsg = objectMapper.readValue(message, ChatMessage.class);
+                System.out.println(chatMsg);
+                //对chatMsg进行装箱
+                chatMsg.setIsLatest(1);
 
-                    Session fromSession = socketSessions.map.get(chatMsg.getFromUser());
-                    Session toSession = socketSessions.map.get(chatMsg.getToUser());
-
-
-                    //声明一个map，封装直接发送信息数据返回前端
-                    Map<String, Object> resultMap = new HashMap<>();
-                    resultMap.put("sendUser", username);
-                    resultMap.put("content", chatMsg.getContent());
-                    resultMap.put("sendTime", chatMsg.getSendTime());
-                    resultMap.put("avatar", chatMsg.getSenderAvatar());
-                    resultMap.put("senderName", chatMsg.getSenderName());
-
-                    JSONObject json = new JSONObject(resultMap);
+                Session fromSession = socketSessions.map.get(chatMsg.getFromUser());
+                Session toSession = socketSessions.map.get(chatMsg.getToUser());
 
 
-                    // 1.判断接收方的toSession是否为null，如果不是则直接发送
-                    if (toSession != null && toSession.isOpen()) {
-                        //发送给接收者.
-                        toSession.getAsyncRemote().sendText(json.toString());
-                        //发送给发送者.
-                        fromSession.getAsyncRemote().sendText(json.toString());
-                    }
+                //声明一个map，封装直接发送信息数据返回前端
+                Map<String, Object> resultMap = new HashMap<>();
+                resultMap.put("sendUser", username);
+                resultMap.put("content", chatMsg.getContent());
+                resultMap.put("sendTime", chatMsg.getSendTime());
+                resultMap.put("avatar", chatMsg.getSenderAvatar());
+                resultMap.put("senderName", chatMsg.getSenderName());
+                resultMap.put("messageType",chatMsg.getType());
+                resultMap.put("type", "chat");
+
+                // 1.判断接收方的toSession是否为null，如果不是则直接发送
+                if (toSession != null && toSession.isOpen()) {
+                    //发送给接收者.
+                    resultMap.put("notice",true);
+                    toSession.getAsyncRemote().sendText(new JSONObject(resultMap).toString());
+                    //发送给发送者.
+                    resultMap.put("notice",false);
+                    fromSession.getAsyncRemote().sendText(new JSONObject(resultMap).toString());
+                }
                 Users users = userService.getById(chatMsg.getToUser());
-                if(users.getInChat() == 0){
-                        //对方不在线，聊天列表未读数加1
-                        ChatList one = chatListService.getOne(new LambdaQueryWrapper<ChatList>()
-                                .eq(ChatList::getLinkId, chatMsg.getLinkId())
-                                .eq(ChatList::getFromUser, chatMsg.getToUser()));
+                if (users.getInChat() == 0) {
+                    //对方不在线，聊天列表未读数加1
+                    ChatList one = chatListService.getOne(new LambdaQueryWrapper<ChatList>()
+                            .eq(ChatList::getLinkId, chatMsg.getLinkId())
+                            .eq(ChatList::getFromUser, chatMsg.getToUser()));
 //                    将接收者的聊天列表的status设置为0
-                        chatListService.update(new LambdaUpdateWrapper<ChatList>()
-                                .set(ChatList::getUnread, one.getUnread() + 1)
-                                .set(ChatList::getStatus, 0)
-                                .eq(ChatList::getLinkId, chatMsg.getLinkId())
-                                .eq(ChatList::getFromUser, chatMsg.getToUser()));
-                    }
-                    //取消上一条消息为最新
-                    chatMessageService.update(new LambdaUpdateWrapper<ChatMessage>().set(ChatMessage::getIsLatest, 0).eq(ChatMessage::getLinkId, chatMsg.getLinkId()));
-                    //保存聊天记录信息
-                    chatMessageService.save(chatMsg);
+                    chatListService.update(new LambdaUpdateWrapper<ChatList>()
+                            .set(ChatList::getUnread, one.getUnread() + 1)
+                            .set(ChatList::getStatus, 0)
+                            .eq(ChatList::getLinkId, chatMsg.getLinkId())
+                            .eq(ChatList::getFromUser, chatMsg.getToUser()));
+                }
+                //取消上一条消息为最新
+                chatMessageService.update(new LambdaUpdateWrapper<ChatMessage>().set(ChatMessage::getIsLatest, 0).eq(ChatMessage::getLinkId, chatMsg.getLinkId()));
+                //保存聊天记录信息
+                chatMessageService.save(chatMsg);
 //                }else{
 ////                    发送官方通知
 //                    Notice notice = objectMapper.readValue(message, Notice.class);

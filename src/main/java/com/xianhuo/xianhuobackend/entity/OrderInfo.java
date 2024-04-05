@@ -22,6 +22,24 @@ public class OrderInfo {
     private Long id;
     //订单编号
     private String orderId;
+    // 售后id
+    private Long afterServiceId;
+    //能否平台介入标志【商家拒绝过一次即置为1】，0表示不能，1表示行
+    private Integer platformFlag;
+    // 商家售后处理状态，0为等待商家处理，1为商家同意，2表示商家不同意
+    @TableField(exist = false)
+    private Integer sellerAfterStatus;
+    //平台售后处理状态，-1表示平台未介入，0表示平台介入，1表示处理完成
+    @TableField(exist = false)
+    private Integer platformAfterStatus;
+    // 售后表状态，0表示售后处理中，-1表示售后失败，1表示售后成功，11表示待发货，12表示待收货
+    @TableField(exist = false)
+    private Integer afterStatus;
+    //    售后创建时间
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date afterCreateTime;
     private String productDetail;
     private String productImages;
     private String productAddress;
@@ -57,6 +75,14 @@ public class OrderInfo {
     private Integer buyerStatus;
     //出售者发货状态，1表示已发货，0表示未发货
     private Integer sellerStatus;
+    //买家收货时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date buyerReceiveTime;
+    //卖家发货时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date sellerSendTime;
     //创建时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

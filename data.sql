@@ -1,4 +1,6 @@
-create table if not exists users
+create database if not exists xianhuo;
+DROP TABLE IF EXISTS users;
+create table users
 (
     id            bigint primary key auto_increment,
     name          varchar(100) comment '用户昵称',
@@ -26,7 +28,7 @@ create table category
 (
     id          bigint primary key auto_increment,
     name        varchar(50) not null comment '分类名称',
-    status      boolean     not null default 1 comment '分类状态',
+    status      boolean     not null default 1 comment '分类状态，1生效，0不生效',
     create_time timestamp            default now() comment '创建时间',
     update_time timestamp comment '更新时间'
 );
@@ -53,14 +55,14 @@ create table sell_mode
 (
     id          bigint primary key auto_increment comment '出售方式id',
     name        varchar(50) not null comment '出售方式名称',
-    status      boolean     not null default 1 comment '出售方式状态',
+    status      boolean     not null default 1 comment '出售方式状态，1生效，0无效',
     create_time timestamp            default now() comment '创建时间',
     update_time timestamp comment '更新时间'
 
 );
-insert sell_mode(name)
-values ('物品出售'),
-       ('物品出租');
+insert sell_mode(name,status)
+values ('物品出售',1),
+       ('物品出租',0);
 
 --  发货方式表
 drop table if exists dispatch_mode;
@@ -68,13 +70,13 @@ create table dispatch_mode
 (
     id          bigint primary key auto_increment comment '发货方式id',
     name        varchar(50) not null comment '发货方式名字',
-    status      boolean     not null default 1 comment '发货方式状态',
+    status      boolean     not null default 1 comment '发货方式状态，1生效，0无效',
     create_time timestamp            default now() comment '创建时间',
     update_time timestamp comment '更新时间'
 );
-insert dispatch_mode(name)
-values ('快递'),
-       ('自提');
+insert dispatch_mode(name,status)
+values ('快递',0),
+       ('自提',1);
 
 
 -- 商品要求
@@ -83,7 +85,7 @@ create table product_require
 (
     id          bigint primary key auto_increment comment 'id',
     name        varchar(50) not null comment '商品要求名字',
-    status      boolean     not null default 1 comment '商品要求状态',
+    status      boolean     not null default 1 comment '商品要求状态，1生效，0不生效',
     create_time timestamp            default now() comment '创建时间',
     update_time timestamp comment '更新时间'
 );
@@ -159,6 +161,7 @@ create table uni_id
     uni_token varchar(500) not null comment 'uni统一登录的token'
 );
 -- 用户聊天关系表
+DROP TABLE IF EXISTS chat_user_link;
 create table chat_user_link
 (
     link_id     bigint primary key auto_increment comment '聊天主表id',
@@ -168,6 +171,7 @@ create table chat_user_link
 );
 
 -- 聊天列表表
+DROP TABLE IF EXISTS chat_list;
 create table chat_list
 (
     `list_id`     bigint primary key auto_increment comment '聊天列表主键',
@@ -181,6 +185,7 @@ create table chat_list
 );
 
 -- 聊天内容详情表
+DROP TABLE IF EXISTS chat_message;
 create table chat_message
 (
     `message_id` bigint primary key auto_increment COMMENT '聊天内容id',
@@ -213,13 +218,15 @@ create table order_info
 (
     id                bigint primary key auto_increment comment '订单表id',
     order_id          varchar(200) not null comment '订单编号',
+    after_service_id bigint comment '售后id',
+    platform_flag    integer default 0 comment '能否平台介入标志【商家拒绝过一次即置为1】，0表示不能，1表示行',
     product_detail    text comment '商品描述',
     product_images    text comment '商品图片',
     product_address   varchar(100) comment '商品地址',
     product_category  bigint comment '商品分类',
     buy_id            bigint       not null comment '咸货系统支付者id',
     sell_id           bigint       not null comment '咸货系统出售者id',
-    alipay_id         bigint comment '支付宝订单号',
+    alipay_id         varchar(100) comment '支付宝订单号',
     product_id        bigint       not null comment '商品id',
     type              int            default 1 comment '支付类型，1表示支付宝，2表示微信',
     total             decimal(20, 2) default 0.0 comment '支付金额',
@@ -227,7 +234,9 @@ create table order_info
     buyer_sys_account varchar(100) comment '支付平台购买用户账号',
     status            int            default -1 comment '商品状态，1表示已支付，-1表示未支付,2表示售后处理中，0表示已退款',
     buyer_status      int            default 0 comment '购买者收货状态，1表示确认收货，0表示未确认',
+    buyer_receive_time timestamp comment '买家收货时间',
     seller_status     int            default 0 comment '出售者发货状态，1表示已发货，0表示未发货',
+    seller_send_time timestamp comment '卖家发货时间',
     create_time       timestamp      default now() comment '创建时间',
     pay_time          timestamp comment '支付时间'
 
@@ -244,6 +253,8 @@ create table admin_user
     school      varchar(100) comment '学校定位，用于校园管理员',
     create_time timestamp default now() comment '创建时间'
 );
+insert into admin_user(account,password,authority)
+values ('admin','admin',1);
 
 -- 投诉表
 drop table if exists complain;
@@ -271,6 +282,9 @@ create table notice
     title       varchar(50)  not null comment '通知标题',
     content     varchar(200) not null comment '通知内容',
     receiver_id bigint       not null comment '通知接收者id',
+    attach_type integer default 0 comment '类型，0表示帖子，1表示商品',
+    attach bigint not null comment '商品id或帖子id',
+    publisher bigint not null comment '发布人id',
     create_time timestamp default now() comment '创建时间'
 ) comment '官方通知';
 
@@ -294,7 +308,11 @@ create table after_service
     platform_status     int       default -1 comment '平台处理状态，-1表示平台未介入，0表示平台介入，1表示处理完成',
     platform_result     varchar(200) comment '平台处理结果',
     platform_user       bigint comment '处理人id',
-    status              int       default 0 comment '售后表状态，0表示售后处理中，-1表示售后失败，1表示售后成功',
+    status              int       default 0 comment '售后表状态，0表示售后处理中，-1表示售后失败，1表示售后成功，11表示待发货，12表示待收货',
+    buyer_send          int default 0 comment '买家发货状态，0表示未发货，1表示已发货',
+    buyer_send_time     timestamp comment '买家发货时间',
+    seller_receive      int default 0 comment '卖家收货状态，0表示未收货，1表示已收货',
+    seller_receive_time timestamp comment '卖家收货时间',
     platform_deal_time  timestamp comment '平台处理时间',
     create_time         timestamp default now() comment '创建时间'
 ) comment '售后表';

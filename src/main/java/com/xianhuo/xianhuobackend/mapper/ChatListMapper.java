@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 public interface ChatListMapper extends BaseMapper<ChatList> {
-    @Select("select cl.list_id, cl.link_id, cl.to_user,cl.from_user, cm.content, cl.unread, cm.send_time, cl.from_window,cl.to_window\n" +
+    @Select("select cl.list_id, cl.link_id, cl.to_user,cl.from_user, cm.content,cm.type, cl.unread, cm.send_time, cl.from_window,cl.to_window\n" +
             "     from chat_list as cl, chat_message as cm\n" +
             "where cl.from_user =#{fromUser}  and cl.status=0 and cl.link_id = cm.link_id and cm.is_latest = 1\n" +
             " order by send_time Desc;")

@@ -58,7 +58,7 @@ public class RequireInfoController {
         long count = requireInfoService.count(new LambdaQueryWrapper<RequireInfo>()
                 .eq(RequireInfo::getUserId, id)
                 .eq(RequireInfo::getStatus,1));
-        return ResponseProcess.returnLong(count,"success","fail");
+        return ResponseResult.ok(count,"success");
 
     }
 
