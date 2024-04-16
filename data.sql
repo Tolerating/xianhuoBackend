@@ -300,7 +300,7 @@ create table after_service
     product_price       decimal(20,2) comment '商品金额',
     images              text comment '图片,逗号分隔',
     product_id          bigint not null comment '商品id',
-    order_id            bigint not null comment '订单表商家订单id',
+    order_id            varchar(200) not null comment '订单表商家订单id',
     seller_id           bigint not null comment '卖家id',
     seller_status       int       default 0 comment '商家处理状态，0为等待商家处理，1为商家同意，2表示商家不同意，',
     seller_refuse_cause varchar(200) comment '商家拒绝原因',
