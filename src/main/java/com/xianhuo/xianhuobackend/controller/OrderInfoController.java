@@ -67,6 +67,12 @@ public class OrderInfoController {
         return ResponseResult.fail(null, "商品已被他人购买");
     }
 
+    @DeleteMapping("/order")
+    public ResponseResult deleteOrder(Long orderId){
+        boolean removed = orderInfoService.remove(new LambdaQueryWrapper<OrderInfo>().eq(OrderInfo::getOrderId, orderId));
+        return  ResponseProcess.returnString(removed,"success","未支付订单删除失败");
+    }
+
     //    获取未发货订单,卖家显示
     @GetMapping("/orders/dispatch")
     public ResponseResult dispatchProduct() {
