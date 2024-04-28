@@ -61,7 +61,7 @@ public class OrderInfoController {
         System.out.println(isExit);
         if (isExit == null) {
             boolean saved = orderInfoService.save(orderInfo);
-            pushNotice(orderInfo.getSellId(), orderInfo.getBuyId(), "商品动态", orderInfo.getProductId(), "您发布的商品已被购买，请尽快处理！", true, false);
+//            pushNotice(orderInfo.getSellId(), orderInfo.getBuyId(), "商品动态", orderInfo.getProductId(), "您发布的商品已被购买，请尽快处理！", true, false);
             return ResponseProcess.returnString(saved, "success", "fail");
         }
         return ResponseResult.fail(null, "商品已被他人购买");

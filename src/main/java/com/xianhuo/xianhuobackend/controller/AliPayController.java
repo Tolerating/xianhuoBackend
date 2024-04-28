@@ -11,11 +11,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.xianhuo.xianhuobackend.common.ResponseProcess;
 import com.xianhuo.xianhuobackend.common.ResponseResult;
+import com.xianhuo.xianhuobackend.common.SocketSessions;
 import com.xianhuo.xianhuobackend.config.AliPayConfig;
-import com.xianhuo.xianhuobackend.entity.OrderInfo;
-import com.xianhuo.xianhuobackend.entity.Product;
-import com.xianhuo.xianhuobackend.service.OrderInfoService;
-import com.xianhuo.xianhuobackend.service.ProductService;
+import com.xianhuo.xianhuobackend.entity.*;
+import com.xianhuo.xianhuobackend.service.*;
+import org.springframework.boot.autoconfigure.web.ConditionalOnEnabledResourceChain;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,6 +37,14 @@ public class AliPayController {
     private OrderInfoService orderInfoService;
     @Resource
     private ProductService productService;
+    @Resource
+    private NoticeService noticeService;
+    @Resource
+    private ChatMessageService chatMessageService;
+    @Resource
+    private ChatListService chatListService;
+    @Resource
+    private ChatUserLinkService chatUserLinkService;
 //    支付接口
     @GetMapping("/pay")
     public ResponseResult pay(String orderNo, HttpServletResponse httpServletResponse) throws Exception{
@@ -107,6 +115,26 @@ public class AliPayController {
                 productService.update(new LambdaUpdateWrapper<Product>()
                         .set(Product::getStatus,0)
                         .eq(Product::getId,orderInfo.getProductId()));
+//                发送通知
+                Map<String, Object> map = SocketSessions.createMessageTemplate("商品动态", "您发布的商品已被购买，请尽快处理！", new Date(), orderInfo.getProductId(), SocketSessions.messageType.PRODUCT);
+                SocketSessions.sendMsg(orderInfo.getSellId(), map);
+                Notice notice = new Notice();
+                notice.setAttachType(1);
+
+                notice.setTitle("商品动态");
+                notice.setAttach(orderInfo.getProductId());
+                notice.setContent("您发布的商品已被购买，请尽快处理！");
+                notice.setPublisher(orderInfo.getSellId());
+                notice.setReceiverId(orderInfo.getSellId());
+                noticeService.save(notice);
+//                ChatUserLink one = chatUserLinkService.getOne(new LambdaQueryWrapper<ChatUserLink>()
+//                        .eq(ChatUserLink::getToUser, orderInfo.getBuyId())
+//                        .eq(ChatUserLink::getFromUser, orderInfo.getSellId())
+//                        .or()
+//                        .eq(ChatUserLink::getToUser, orderInfo.getSellId())
+//                        .eq(ChatUserLink::getFromUser, orderInfo.getBuyId()));
+//                 //取消上一条消息为最新
+//                chatMessageService.update(new LambdaUpdateWrapper<ChatMessage>().set(ChatMessage::getIsLatest, 0).eq(ChatMessage::getLinkId, chatMsg.getLinkId()));
             }
         }
     }
